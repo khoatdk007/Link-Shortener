@@ -2,7 +2,7 @@ function sendUrlError(message) {
     let elem = $("#message");
     elem.text(message);
     elem.fadeIn("slow");
-    setTimeout(function () { elem.slideUp("slow") }, 2000);
+    setTimeout(function () { elem.slideUp("slow"); elem.text(""); }, 2000);
 }
 $("#shorten-btn").click(function () {
     let fullUrl = String($("#full-url").val());
