@@ -4,7 +4,7 @@ const app = express();
 const bodyParser = require("body-parser");
 const MongoClient = require("mongodb").MongoClient;
 require("dotenv").config();
-const dbUrl = "mongodb://admin:C0ngngherobot@ds062339.mlab.com:62339/link-shortener";
+const dbUrl = process.env.DB_URL;
 const generate = require("./generate-id");
 
 let collection;
@@ -52,7 +52,7 @@ app.get("/:id", (req, res) => {
 
 MongoClient.connect(dbUrl, { useNewUrlParser: true }, (err, client) => {
     if (err) throw err;
-    collection = client.db("shortener").collection("links");
+    collection = client.db("lnk-shorter").collection("links");
     const port = process.env.PORT || 5000;
     app.listen(port, () => {
         console.log(`Server started on port ${port}`);
