@@ -5,9 +5,165 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Link Shortener</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Lnk Shorter</title>
     <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-size: 20px;
+            font-family: "Roboto", Arial, sans-serif;
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #110b36;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+        }
+
+        h1 {
+            padding: 0;
+            margin: 2%;
+            font-size: 80px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #d8d8d8;
+        }
+
+        .container {
+            box-sizing: border-box;
+            padding: 20px;
+            padding-top: 5%;
+        }
+
+
+        input[type="url"] {
+            width: calc(90% - 200px);
+            color: #444;
+            border: 1px solid #999;
+            border-radius: 8px;
+            padding: 15px;
+            transition-duration: .2s;
+        }
+
+        input[type="url"]::placeholder {
+            color: #b1b1b1;
+        }
+
+        input[type="url"]:focus {
+            outline: none;
+            box-shadow: 0 0 7px 0 #fff;
+            transition-duration: .2s;
+        }
+
+        input[type="submit"] {
+            background-color: #26268b;
+            color: white;
+            height: 55px;
+            line-height: 55px;
+            width: 160px;
+            border: none;
+            border-radius: 8px;
+            transition-duration: .2s;
+        }
+
+        input[type="submit"]:hover {
+            background-color: blue;
+            transition-duration: .2s;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:focus {
+            outline: none;
+        }
+
+        #message {
+            text-align: center;
+            border: 1px solid darkred;
+            border-radius: 8px;
+            color: darkred;
+            background-color: #ffb8b3;
+            height: 60px;
+            line-height: 60px;
+            width: 90%;
+            margin: 10px auto -10px auto;
+            display: none;
+        }
+
+        #recent-links {
+            margin: 20px auto;
+            padding: 0;
+            width: 90%;
+            list-style-type: none;
+            text-align: right;
+        }
+
+        .link {
+            color: black;
+            background-color: #fff;
+            padding: 20px;
+            position: relative;
+            border: none;
+            vertical-align: middle;
+        }
+
+        .link:first-child {
+            border-radius: 8px 8px 0px 0px;
+        }
+
+        .link:last-child {
+            border-radius: 0px 0px 8px 8px;
+        }
+
+        .link:not(:first-child)::before {
+            content: "";
+            position: absolute;
+            width: calc(100% - 40px);
+            top: 0;
+            left: 20px;
+            border-top: 1px solid #b6b6b6;
+        }
+
+        .link span {
+            display: inline-block;
+            vertical-align: middle;
+            max-width: 500px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .link .copy-btn {
+            font-size: 14px;
+            color: #0000ff;
+            background-color: #dbdbff;
+            padding: 10px 20px;
+            margin-left: 20px;
+            border: none;
+            border-radius: 4px;
+            transition-duration: .2s;
+        }
+
+        .link .copy-btn:hover {
+            background-color: #cacaff;
+            cursor: pointer;
+        }
+
+
+        .link a {
+            font-size: 18px;
+            color: #0000ff;
+            text-decoration: none;
+        }
+
+        .link .long-link {
+            padding: 10px 0 10px 0;
+            color: #333;
+            font-size: 18px;
+            float: left;
+        }
+    </style>
 </head>
 
 <body>
@@ -22,7 +178,55 @@
         </ul>
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script src="main.js"></script>
+    <script>
+        function sendUrlError(message) {
+            let elem = $("#message");
+            elem.text(message);
+            elem.fadeIn("slow");
+            setTimeout(function () { elem.slideUp("slow"); elem.text(""); }, 2000);
+        }
+        $("#shorten-btn").click(function () {
+            let fullUrl = String($("#full-url").val());
+            if (!(fullUrl.startsWith("http://") || fullUrl.startsWith("https://"))) {
+                fullUrl = "http://" + fullUrl;
+            }
+            const urlHostname = fullUrl.slice(fullUrl.indexOf("//") + 2, fullUrl.indexOf("/", fullUrl.indexOf("//") + 2));
+            if (!urlHostname.includes(".")) {
+                return sendUrlError("That link is not a valid url!");
+            }
+            if (urlHostname === window.location.hostname) {
+                return sendUrlError("That is already a shorten link!");
+            }
+            $.post("/api/shorten",
+                {
+                    url: fullUrl
+                },
+                function (data, status) {
+                    let newLink = `
+                <li class="link">
+                    <span class="long-link">${$("#full-url").val()}</span>
+                    <span>
+                        <span class="short-link"><a href="${data}">${data}</a></span>
+                        <span class="copy-btn">Copy</span>
+                    </span>
+                </li>
+            `;
+                    $("#full-url").val(data);
+                    let recentLinks = $("#recent-links");
+                    if (recentLinks.children().length === 3) recentLinks.children().last().remove();
+                    recentLinks.prepend(newLink);
+                }
+            );
+
+        });
+        $("#recent-links").on("click", ".copy-btn", function () {
+            var $temp = $("<input>");
+            $("body").append($temp);
+            $temp.val($(this).parent().children(".short-link").text()).select();
+            document.execCommand("copy");
+            $temp.remove();
+        });
+    </script>
 </body>
 
 </html>
