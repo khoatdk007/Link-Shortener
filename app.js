@@ -33,10 +33,7 @@ app.post("/api/shorten", urlencodedParser, (req, res) => {
     });
 });
 
-app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, "public", "index.html"));
-});
-
+app.use(express.static("public"));
 app.get("/:id", (req, res) => {
     const id = req.params.id;
     collection.findOne({ id: id }, (err, result) => {
@@ -58,3 +55,4 @@ MongoClient.connect(dbUrl, { useNewUrlParser: true }, (err, client) => {
         console.log(`Server started on port ${port}`);
     });
 });
+console.log("Connected to MongoDB");
