@@ -4,7 +4,7 @@ const app = express();
 const bodyParser = require("body-parser");
 const MongoClient = require("mongodb").MongoClient;
 require("dotenv").config();
-const dbUrl = process.env.DB_URL;
+const dbUrl = "mongodb://localhost:27017/shortener";
 const generate = require("./generate-id");
 
 let collection;
