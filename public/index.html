@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Link Shortener</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Link Shortener</h1>
+        <div class="form-shorten">
+            <input type="url" id="full-url" placeholder="Put your link here" autocomplete="off">
+            <input type="submit" id="shorten-btn" value="Shorten">
+        </div>
+        <div id="message">That link is not a valid url!</div>
+        <ul id="recent-links">
+            <li class="link">
+                <span class="long-link">https://bitly.com/</span>
+                <span>
+                    <span class="short-link"><a
+                            href="http://localhost:5000/BWCTbZ">http://localhost:5000/BWCTbZ</a></span>
+                    <span class="copy-btn">Copy</span>
+                </span>
+            </li>
+
+            <li class="link">
+                <span class="long-link">https://api.jquery.com/append/</span>
+                <span>
+                    <span class="short-link"><a
+                            href="http://localhost:5000/f80U9S">http://localhost:5000/f80U9S</a></span>
+                    <span class="copy-btn">Copy</span>
+                </span>
+            </li>
+
+            <li class="link">
+                <span
+                    class="long-link">https://stackoverflow.com/questions/19400139/how-to-hide-an-html-element-with-css
+                </span>
+                <span>
+                    <span class="short-link"><a
+                            href="http://localhost:5000/uduw7w">http://localhost:5000/uduw7w</a></span>
+                    <span class="copy-btn">Copy</span>
+                </span>
+            </li>
+        </ul>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script>
+        function sendUrlError(message) {
+            let elem = $("#message");
+            elem.text(message);
+            elem.fadeIn("slow");
+            setTimeout(function () { elem.slideUp("slow") }, 2000);
+        }
+        $("#shorten-btn").click(function () {
+            let fullUrl = String($("#full-url").val());
+            if (!(fullUrl.startsWith("http://") || fullUrl.startsWith("https://"))) {
+                fullUrl = "http://" + fullUrl;
+            }
+            const urlHostname = fullUrl.slice(fullUrl.indexOf("//") + 2, fullUrl.indexOf("/", fullUrl.indexOf("//") + 2));
+            if (!urlHostname.includes(".")) {
+                return sendUrlError("That link is not a valid url!");
+            }
+            if (urlHostname === window.location.hostname) {
+                return sendUrlError("That is already a shorten link!");
+            }
+            $.post("/api/shorten",
+                {
+                    url: fullUrl
+                },
+                function (data, status) {
+                    let newLink = `
+                        <li class="link">
+                            <span class="long-link">${$("#full-url").val()}</span>
+                            <span>
+                                <span class="short-link"><a href="${data}">${data}</a></span>
+                                <span class="copy-btn">Copy</span>
+                            </span>
+                        </li>
+                    `;
+                    $("#full-url").val(data);
+                    let recentLinks = $("#recent-links");
+                    if (recentLinks.children().length === 3) recentLinks.children().last().remove();
+                    recentLinks.prepend(newLink);
+                }
+            );
+
+        });
+        $("#recent-links").on("click", ".copy-btn", function () {
+            var $temp = $("<input>");
+            $("body").append($temp);
+            $temp.val($(this).parent().children(".short-link").text()).select();
+            document.execCommand("copy");
+            $temp.remove();
+        });
+    </script>
+</body>
+
+</html>
