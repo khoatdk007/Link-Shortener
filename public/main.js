@@ -38,6 +38,12 @@ $("#shorten-btn").click(function () {
     );
 
 });
+$("#full-url").keypress(function(event) {
+    const keyCode = event.keyCode || event.which;
+    if (keyCode == 13) {
+        $("#shorten-btn").click();
+    }
+});
 $("#recent-links").on("click", ".copy-btn", function () {
     var $temp = $("<input>");
     $("body").append($temp);
