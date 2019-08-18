@@ -1,6 +1,8 @@
 const path = require("path");
+const fs = require("fs");
 const express = require("express");
 const app = express();
+const http = require("http");
 const bodyParser = require("body-parser");
 const MongoClient = require("mongodb").MongoClient;
 require("dotenv").config();
@@ -51,7 +53,7 @@ MongoClient.connect(dbUrl, { useNewUrlParser: true }, (err, client) => {
     if (err) throw err;
     collection = client.db("lnk-shorter").collection("links");
     const port = process.env.PORT || 5000;
-    app.listen(port, () => {
+    http.createServer(app).listen(port, () => {
         console.log(`Server started on port ${port}`);
     });
 });
