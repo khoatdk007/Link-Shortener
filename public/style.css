@@ -93,14 +93,15 @@ input[type="submit"]:focus {
     position: relative;
     vertical-align: middle;
 }
-.link:first-child:not(:last-child) {
-    border-radius: 8px 8px 0 0;
-}
 .link:first-child {
-    border-radius: 8px;
+    border-radius: 8px 8px 0 0;
 }
 .link:last-child {
     border-radius: 0 0 8px 8px;
+}
+
+.link:first-child:last-child {
+    border-radius: 8px;
 }
 .link:not(:first-child)::before {
     content: "";
