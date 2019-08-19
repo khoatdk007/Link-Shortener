@@ -25,7 +25,7 @@ $("#shorten-btn").click(function () {
                 <li class="link">
                     <span class="long-link">${$("#full-url").val()}</span>
                     <span>
-                        <span class="short-link"><a href="${data}">${data}</a></span>
+                        <span class="short-link"><a href="${data}" target="_blank" rel="noopener noreferrer">${data}</a></span>
                         <span class="copy-btn">Copy</span>
                     </span>
                 </li>
