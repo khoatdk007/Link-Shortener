@@ -18,7 +18,7 @@ $("#shorten-btn").click(function () {
     if (!(fullUrl.startsWith("http://") || fullUrl.startsWith("https://"))) {
         fullUrl = "http://" + fullUrl;
     }
-    if (fullUrl === window.location.href) {
+    if (fullUrl.includes(window.location.href)) {
         return sendUrlError("That is already a shorten link!");
     }
     if (!isValidURL(fullUrl)) {
