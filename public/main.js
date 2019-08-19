@@ -4,13 +4,22 @@ function sendUrlError(message) {
     elem.fadeIn("slow");
     setTimeout(function () { elem.slideUp("slow"); elem.text(""); }, 2000);
 }
+function isValidURL(str) {
+    var pattern = new RegExp('^(https?:\\/\\/)?' +
+        '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' +
+        '((\\d{1,3}\\.){3}\\d{1,3}))' +
+        '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + 
+        '(\\?[;&a-z\\d%_.~+=-]*)?' + 
+        '(\\#[-a-z\\d_]*)?$', 'i');
+    return !!pattern.test(str);
+}
 $("#shorten-btn").click(function () {
-    let fullUrl = String($("#full-url").val());
+    let fullUrl = String($("#full-url").val()).trim();
     if (!(fullUrl.startsWith("http://") || fullUrl.startsWith("https://"))) {
         fullUrl = "http://" + fullUrl;
     }
     const urlHostname = fullUrl.slice(fullUrl.indexOf("//") + 2, fullUrl.indexOf("/", fullUrl.indexOf("//") + 2));
-    if (!urlHostname.includes(".")) {
+    if (!isValidURL(fullUrl)) {
         return sendUrlError("That link is not a valid url!");
     }
     if (urlHostname === window.location.hostname) {
@@ -38,7 +47,7 @@ $("#shorten-btn").click(function () {
     );
 
 });
-$("#full-url").keypress(function(event) {
+$("#full-url").keypress(function (event) {
     const keyCode = event.keyCode || event.which;
     if (keyCode == 13) {
         $("#shorten-btn").click();

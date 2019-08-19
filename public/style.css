@@ -82,6 +82,8 @@ input[type="submit"]:focus {
     width: 90%;
     list-style-type: none;
     text-align: right;
+    border: none;
+    border-radius: 8px;
 }
 
 .link {
@@ -89,14 +91,16 @@ input[type="submit"]:focus {
     background-color: #fff;
     padding: 20px;
     position: relative;
-    border: none;
     vertical-align: middle;
 }
+.link:first-child:not(:last-child) {
+    border-radius: 8px 8px 0 0;
+}
 .link:first-child {
-    border-radius: 8px 8px 0px 0px;
+    border-radius: 8px;
 }
 .link:last-child {
-    border-radius: 0px 0px 8px 8px;
+    border-radius: 0 0 8px 8px;
 }
 .link:not(:first-child)::before {
     content: "";
