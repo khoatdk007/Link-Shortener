@@ -25,7 +25,7 @@ app.post("/api/shorten", urlencodedParser, (req, res) => {
         let usedIds = [];
         collection.find({}).toArray((err, result) => {
             if (err) throw err;
-            usedIds = result.map(obj => { return obj.id; });
+            usedIds = result.map(obj => obj.id);
         });
         const shortId = generate(6, usedIds);
         const newObj = { id: shortId, url: inputUrl };
