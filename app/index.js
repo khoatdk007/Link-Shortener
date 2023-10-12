@@ -35,7 +35,6 @@ app.post("/api/shorten", urlencodedParser, (req, res) => {
     });
 });
 
-app.use(express.static("public"));
 app.get("/:id", (req, res) => {
     const id = req.params.id;
     collection.findOne({ id: id }, (err, result) => {
@@ -52,9 +51,7 @@ app.get("/:id", (req, res) => {
 MongoClient.connect(dbUrl, { useNewUrlParser: true }, (err, client) => {
     if (err) throw err;
     collection = client.db("lnk-shorter").collection("links");
-    const port = process.env.PORT || 5000;
-    http.createServer(app).listen(port, () => {
-        console.log(`Server started on port ${port}`);
-    });
 });
 console.log("Connected to MongoDB");
+
+module.exports = app;
