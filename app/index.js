@@ -52,6 +52,7 @@ MongoClient.connect(dbUrl, { useNewUrlParser: true }, (err, client) => {
     if (err) throw err;
     collection = client.db("lnk-shorter").collection("links");
 });
+
 console.log("Connected to MongoDB");
 
 module.exports = app;
